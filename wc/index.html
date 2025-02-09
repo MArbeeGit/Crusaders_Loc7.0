@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheelchair Accessibility Map</title>
+
+    <!-- Google Maps JavaScript API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-TZX-Bw9BI1Bh23TiUcZovYPP3pq_CI8&libraries=places"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Internal CSS -->
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto p-4">
+        <!-- Back Button -->
+        <a href="http://10.120.109.119:3000" class="inline-flex items-center mb-4 text-blue-600 hover:text-blue-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+            </svg>
+            Back
+        </a>
+
+        <h1 class="text-3xl font-bold mb-6">Wheelchair Accessibility Map</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Map Container -->
+            <div class="md:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
+                <div id="map"></div>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Search Box -->
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h2 class="text-xl font-semibold mb-4">Search Location</h2>
+                    <div class="flex space-x-2">
+                        <input type="text" id="location-input" placeholder="Enter your location" class="flex-grow px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button onclick="searchNearby()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Search
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h2 class="text-xl font-semibold mb-4">Nearby Accessible Locations</h2>
+                    <ul id="location-list" class="list-disc pl-5 space-y-2"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Internal JavaScript -->
+    <script>
+        let map;
+        let service;
+        let infowindow;
+
+        // Initialize the map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 28.7041, lng: 77.1025 }, // Default to Delhi, India
+                zoom: 13
+            });
+
+            infowindow = new google.maps.InfoWindow();
+            service = new google.maps.places.PlacesService(map);
+
+            // Try to get the user's current location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        map.setCenter(pos);
+                    },
+                    () => {
+                        handleLocationError(true, infowindow, map.getCenter());
+                    }
+                );
+            } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, infowindow, map.getCenter());
+            }
+        }
+
+        // Handle geolocation errors
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(
+                browserHasGeolocation
+                    ? 'Error: The Geolocation service failed.'
+                    : "Error: Your browser doesn't support geolocation."
+            );
+            infoWindow.open(map);
+        }
+
+        // Function to search nearby wheelchair-accessible locations
+        function searchNearby() {
+            const locationInput = document.getElementById('location-input').value;
+
+            if (!locationInput) {
+                alert('Please enter a location.');
+                return;
+            }
+
+            // Use Geocoder to convert the input location to coordinates
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: locationInput }, (results, status) => {
+                if (status === 'OK') {
+                    const location = results[0].geometry.location;
+                    map.setCenter(location);
+
+                    // Perform nearby search
+                    const request = {
+                        location: location,
+                        radius: 1000, // Search within 1km
+                        type: 'restaurant', // You can change this to other types like 'cafe', 'park', etc.
+                        keyword: 'wheelchair accessible'
+                    };
+
+                    service.nearbySearch(request, (results, status) => {
+                        if (status === google.maps.places.PlacesServiceStatus.OK) {
+                            const locationList = document.getElementById('location-list');
+                            locationList.innerHTML = ''; // Clear previous results
+
+                            results.forEach(place => {
+                                // Add marker to the map
+                                const marker = new google.maps.Marker({
+                                    position: place.geometry.location,
+                                    map: map,
+                                    title: place.name
+                                });
+
+                                // Add location to the info box
+                                const listItem = document.createElement('li');
+                                listItem.textContent = `${place.name}`;
+                                locationList.appendChild(listItem);
+                            });
+                        } else {
+                            console.error('Error fetching data:', status);
+                        }
+                    });
+                } else {
+                    alert('Location not found. Please try again.');
+                }
+            });
+        }
+
+        // Initialize the map when the page loads
+        window.onload = initMap;
+    </script>
+</body>
+</html>
+

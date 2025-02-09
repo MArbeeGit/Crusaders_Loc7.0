@@ -1,0 +1,157 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Advisor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Set full-page background image */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+
+        /* Navbar */
+        nav {
+            width: 100%;
+            background: white;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            width: 100%;
+            margin: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            font-weight: 500;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .nav-links a:hover {
+            color: gray;
+        }
+
+        /* Mobile Dropdown */
+        #mobile-menu {
+            display: none;
+            flex-direction: column;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 0;
+        }
+
+        #mobile-menu a {
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            display: block;
+        }
+
+        /* Center Transparent Box */
+        .transparent-box {
+            background: rgba(255, 255, 255, 0.3); /* Transparent white */
+            color: black;
+            text-align: center;
+            padding: 20px;
+            width: 50%;
+            max-width: 600px;
+            margin-top: 10%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .transparent-box h2 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .transparent-box p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* Mobile Menu Button */
+        #menu-btn {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            #menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="#" class="text-black text-xl font-bold">Travel Advisor</a>
+
+            <ul class="nav-links" id="menu">
+                <li><a href="#">About Us</a></li>
+                <li><a href="http://10.120.109.119:3000">Home</a></li>
+            </ul>
+
+            <button id="menu-btn">☰</button>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <ul id="mobile-menu">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Go to Travel Advisor</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Transparent Box with Description -->
+    <div class="transparent-box">
+        <h2>Welcome to Travel Advisor</h2>
+        <p>
+            Travel Advisor is your ultimate guide to discovering the best restaurants, hotels, and tourist attractions near you. Whether you're planning a dream vacation, a weekend getaway, or simply exploring new places in your city, we've got you covered with reliable recommendations, real user reviews, and expert insights.
+        </p>
+        <br>
+        <p>
+            Our platform helps you effortlessly navigate your journey, offering curated lists of top-rated spots, hidden gems, and must-visit destinations. From fine dining to budget-friendly eateries, luxury hotels to cozy stays, and famous landmarks to offbeat adventures, we ensure that every traveler finds the perfect experience tailored to their preferences.
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const menuBtn = document.getElementById("menu-btn");
+            const mobileMenu = document.getElementById("mobile-menu");
+
+            menuBtn.addEventListener("click", function () {
+                mobileMenu.style.display = mobileMenu.style.display === "block" ? "none" : "block";
+            });
+        });
+    </script>
+</body>
+</html>
